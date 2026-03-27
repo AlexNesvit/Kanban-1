@@ -97,3 +97,56 @@ cd backend && npm install && npm run dev
 ```bash
 cd frontend && npm install && npm run dev
 ```
+
+## Question 4 - Vérification de l'environnement de développement
+
+### 1) Capture - Démarrage du serveur Node.js (Express)
+
+```text
+> kanban-backend@1.0.0 start
+> node src/server.js
+
+Server listening on http://localhost:5001
+```
+
+Note: le port `5000` était déjà occupé dans l'environnement local, donc le test a été effectué sur `5001`.
+
+### 2) Capture - Lancement de l'application React
+
+```text
+> kanban-frontend@1.0.0 dev
+> vite --port 5174
+
+VITE v5.4.21  ready in 147 ms
+➜ Local:   http://localhost:5174/
+```
+
+Extrait de réponse HTTP de l'app React (`curl http://localhost:5174/`) :
+
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <script type="module">import { injectIntoGlobalHook } from "/@react-refresh";
+```
+
+### 3) Capture - Test de communication front-end <-> API
+
+Le front-end appelle `/api/tasks` (proxy Vite vers Express) :
+
+```js
+// frontend/src/services/taskService.js
+fetch('/api/tasks')
+```
+
+Résultat du test via le serveur front-end (`curl http://localhost:5174/api/tasks`) :
+
+```json
+[{"id":1,"title":"Configurer le projet","status":"done"},{"id":2,"title":"Créer les routes API","status":"in-progress"},{"id":3,"title":"Préparer le front React","status":"todo"}]
+```
+
+Vérification directe de l'API (`curl http://localhost:5001/api/health`) :
+
+```json
+{"message":"API is running"}
+```
