@@ -51,3 +51,10 @@ export function listTasks() {
 export function listColumns() {
   return boardData.columns;
 }
+
+export function getBoardData() {
+  return {
+    columns: boardData.columns,
+    tasks: boardData.tasks
+  };
+}
