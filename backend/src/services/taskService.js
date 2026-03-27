@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto';
 import { createColumn } from '../models/columnModel.js';
 import { createTask } from '../models/taskModel.js';
+import { AppError } from '../errors/AppError.js';
 
 function generateDemoBoard() {
   const columns = [
@@ -57,4 +58,54 @@ export function getBoardData() {
     columns: boardData.columns,
     tasks: boardData.tasks
   };
+}
+
+function assertColumnExists(columnId) {
+  const exists = boardData.columns.some((column) => column.id === columnId);
+  if (!exists) {
+    throw new AppError(400, 'Task references an unknown column.');
+  }
+}
+
+export function addTask(taskPayload) {
+  assertColumnExists(taskPayload.columnId);
+
+  let task;
+  try {
+    task = createTask({
+      id: randomUUID(),
+      ...taskPayload
+    });
+  } catch (error) {
+    throw new AppError(400, error.message);
+  }
+
+  boardData.tasks.push(task);
+  return task;
+}
+
+export function updateTask(taskId, taskPayload) {
+  if (typeof taskId !== 'string' || taskId.trim().length === 0) {
+    throw new AppError(400, 'Task id parameter is required.');
+  }
+
+  const index = boardData.tasks.findIndex((task) => task.id === taskId);
+  if (index === -1) {
+    throw new AppError(404, 'Task not found.');
+  }
+
+  assertColumnExists(taskPayload.columnId);
+
+  let updatedTask;
+  try {
+    updatedTask = createTask({
+      id: taskId,
+      ...taskPayload
+    });
+  } catch (error) {
+    throw new AppError(400, error.message);
+  }
+
+  boardData.tasks[index] = updatedTask;
+  return updatedTask;
 }
