@@ -150,3 +150,21 @@ Vérification directe de l'API (`curl http://localhost:5001/api/health`) :
 ```json
 {"message":"API is running"}
 ```
+
+## Exercice 7 - Tests automatisés
+
+### Fichier de test
+
+`backend/tests/boardRoutes.test.js`
+
+### Capture d'exécution réussie
+
+```text
+> kanban-backend@1.0.0 test
+> vitest run
+
+RUN  v4.1.2 /Users/alexnesvit/Sites/Iscod/Kanban1/backend
+
+Test Files  1 passed (1)
+     Tests  2 passed (2)
+```
